@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Promotion Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-rocket"></i>
+                <div>
+                    <div>SocialBoost</div>
+                    <div class="tagline">የማህበራዊ ሚዲያ አገልግሎቶች</div>
+                </div>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>100% አስተማማኝ አገልግሎት</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>የሶሻል ሚዲያ ተጠቃሚነት በስፋት እናሳድግልዎታለን</h1>
+            <p>በአስተማማኝነት እና በተመጣጣኝ ዋጋ ሁሉንም የማህበራዊ ሚዲያ አገልግሎቶች እናቀርባለን። <span class="highlight">ቴሌግራም፣ Instagram፣ TikTok፣ Facebook እና YouTube</span> የሚሆኑትን ቻናሎች እና ግሩፖች እናሳድጋለን።</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>የኛ አገልግሎቶች</h2>
+            </div>
+
+            <div class="services-grid" id="servicesGrid">
+                <!-- Services will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">አዲስ ትዕዛዝ</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="serviceName">የአገልግሎት አይነት</label>
+                        <input type="text" class="form-control" id="serviceName" readonly>
+                    </div>
+                    
+                    <div class="selected-quantity">
+                        <h4>ተመርጠዋል: <span id="quantityValue"></span></h4>
+                        <div id="quantityPrice"></div>
+                    </div>
+                    
+                    <div class="form-group" id="usernameField">
+                        <label for="username">የተጠቃሚ ስም</label>
+                        <input type="text" class="form-control" id="username" placeholder="@username" required>
+                    </div>
+                    
+                    <div class="form-group" id="linkField" style="display:none;">
+                        <label for="videoLink">የቪዲዮ ማገናኛ</label>
+                        <input type="url" class="form-control" id="videoLink" placeholder="https://..." required>
+                    </div>
+                    
+                    <div class="price-summary">
+                        <h4>የዋጋ ማጠቃለያ</h4>
+                        <div class="summary-row">
+                            <span>የአገልግሎት ዋጋ</span>
+                            <span id="unitPrice">0 ብር</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>ብዛት</span>
+                            <span id="displayQuantity">1</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>ጠቅላላ</span>
+                            <span id="totalPrice">0 ብር</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>የክፍያ ዘዴ ምረጥ</label>
+                        <div class="payment-methods">
+                            <div class="payment-method" data-method="telebirr">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>Telebirr</div>
+                            </div>
+                            <div class="payment-method" data-method="cbe">
+                                <i class="fas fa-university"></i>
+                                <div>CBE</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-details" id="paymentDetails">
+                        <h4>የክፍያ መረጃዎች</h4>
+                        <div class="account-details">
+                            <div id="accountName">ስም: የስራ ማእከል</div>
+                            <div class="account-number" id="accountNumber">2519XXXXXXXX</div>
+                            <div id="additionalInfo"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paymentScreenshot">የክፍያ ስክሪንሾት ይጫኑ</label>
+                            <input type="file" class="form-control" id="paymentScreenshot" accept="image/*" required>
+                            <small>ክፍያውን ካደረጉ በኋላ የተጠናቀቀ ስክሪንሾት ይጫኑ (PNG, JPG, JPEG)</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="prevStep">ተመለስ</button>
+                <button class="btn btn-primary" id="nextStep">ቀጥል</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div id="loadingText">ትዕዛዙን እየላክን ነው...</div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>ትዕዛዝዎ በተሳካ ሁኔታ ተልኳል! ✅</h3>
+            <p id="successDetails">ትዕዛዝዎ ወደ አስተዳዳሪ ተልኳል። በቅርብ ጊዜ እንገናኝዎታለን።</p>
+            <button class="btn btn-primary" id="closeSuccess" style="margin-top: 20px;">ዝጋ</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ስለ እኛ</h3>
+                    <p>በማህበራዊ ሚዲያ ውስጥ ከፍተኛ ጥራት ያለው አገልግሎት እንሰጣለን። የእኛ ዓላማ በአስተማማኝነት እና በፍጥነት ደንበኞቻችንን ማሟላት ነው።</p>
+                    <div class="trust-badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>100% አስተማማኝ አገልግሎት</span>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>በማንኛውም ጊዜ ያግኙን</h3>
+                    <p><i class="fas fa-envelope"></i> info@socialboost.et</p>
+                    <p><i class="fas fa-phone"></i> +251 9XX XXX XXX</p>
+                    <p><i class="fab fa-telegram"></i> @socialboost_et</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>ማስታወሻ</h3>
+                    <p>ሁሉም አገልግሎቶቻችን በሙሉ አስተማማኝ ናቸው። ደንበኞቻችን ሙሉ የሆነ እርካታ እንዲኖራቸው እናስተማማናለን።</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 SocialBoost. ሁሉም መብቶች የተጠበቁ ናቸው።
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
