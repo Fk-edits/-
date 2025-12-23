@@ -645,7 +645,7 @@ function addTelegramBadge() {
             box-shadow: 0 3px 10px rgba(0, 136, 204, 0.3);
         ">
             <i class="fab fa-telegram" style="font-size: 16px;"></i> 
-            Telegram App
+            @booottttttttttt_bot
         </div>
     `;
     document.body.appendChild(badge);
@@ -736,6 +736,7 @@ function initPage() {
     console.log('🤖 Telegram Integration: Active');
     console.log('🔧 Bot Token:', TELEGRAM_BOT_TOKEN ? '✓ Set' : '✗ Missing');
     console.log('👤 Chat ID:', TELEGRAM_CHAT_ID ? '✓ Set' : '✗ Missing');
+    console.log('🤖 Bot Username:', '@booottttttttttt_bot');
     console.log('🌐 Mode:', tg ? 'Telegram Mini App' : 'Web Browser');
     console.log('✅ System Status: READY');
     console.log('=========================================');
