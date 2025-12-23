@@ -680,7 +680,7 @@ function addTelegramButton() {
                 <i class="fab fa-telegram" style="font-size: 26px;"></i>
                 <div>
                     <div style="font-weight: bold; font-size: 15px;">Open in Telegram</div>
-                    <div style="font-size: 12px; opacity: 0.9;">Better experience</div>
+                    <div style="font-size: 12px; opacity: 0.9;">Bot: @booottttttttttt_bot</div>
                 </div>
             </a>
         </div>
@@ -747,5 +747,4 @@ document.addEventListener('DOMContentLoaded', initPage);
 // Also try to initialize if page loads slowly
 window.addEventListener('load', function() {
     console.log('Page fully loaded');
-
 });
