@@ -664,7 +664,7 @@ function addTelegramButton() {
             z-index: 1000;
             animation: fadeIn 0.5s ease-in;
         ">
-            <a href="https://t.me/socialboost_et_bot" target="_blank" 
+            <a href="https://t.me/booottttttttttt_bot" target="_blank" 
                style="
                     display: flex; 
                     align-items: center; 
@@ -747,4 +747,5 @@ document.addEventListener('DOMContentLoaded', initPage);
 // Also try to initialize if page loads slowly
 window.addEventListener('load', function() {
     console.log('Page fully loaded');
+
 });
