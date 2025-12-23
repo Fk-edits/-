@@ -626,78 +626,112 @@ function initEventListeners() {
 function addTelegramBadge() {
     if (!tg) return;
     
+    // Create badge with higher z-index and more visible styling
     const badge = document.createElement('div');
+    badge.id = 'telegramBadge';
     badge.innerHTML = `
         <div style="
             position: fixed; 
-            top: 10px; 
-            right: 10px; 
+            top: 15px; 
+            right: 15px; 
             background: linear-gradient(135deg, #0088cc, #00aced);
             color: white; 
-            padding: 8px 15px; 
-            border-radius: 20px; 
-            font-size: 13px; 
-            z-index: 1001; 
+            padding: 10px 18px; 
+            border-radius: 25px; 
+            font-size: 14px; 
+            z-index: 99999; 
             display: flex; 
             align-items: center; 
-            gap: 8px;
-            font-weight: 500;
-            box-shadow: 0 3px 10px rgba(0, 136, 204, 0.3);
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+            cursor: default;
         ">
-            <i class="fab fa-telegram" style="font-size: 16px;"></i> 
+            <i class="fab fa-telegram" style="font-size: 18px;"></i> 
             @booottttttttttt_bot
         </div>
     `;
     document.body.appendChild(badge);
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(0, 136, 204, 0.6); }
+            100% { box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4); }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Add Open in Telegram button if NOT in Telegram
 function addTelegramButton() {
     if (tg) return; // Don't show if already in Telegram
     
+    // Create button with higher z-index
     const button = document.createElement('div');
+    button.id = 'telegramLaunchBtn';
     button.innerHTML = `
-        <div id="telegramLaunchBtn" style="
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px; 
-            z-index: 1000;
-            animation: fadeIn 0.5s ease-in;
-        ">
-            <a href="https://t.me/booottttttttttt_bot" target="_blank" 
-               style="
-                    display: flex; 
-                    align-items: center; 
-                    gap: 12px; 
-                    background: linear-gradient(135deg, #0088cc, #00aced);
-                    color: white; 
-                    padding: 14px 22px; 
-                    border-radius: 30px; 
-                    text-decoration: none; 
-                    box-shadow: 0 5px 20px rgba(0, 136, 204, 0.4);
-                    transition: all 0.3s ease;
-                ">
-                <i class="fab fa-telegram" style="font-size: 26px;"></i>
-                <div>
-                    <div style="font-weight: bold; font-size: 15px;">Open in Telegram</div>
-                    <div style="font-size: 12px; opacity: 0.9;">Bot: @booottttttttttt_bot</div>
-                </div>
-            </a>
-        </div>
-        
-        <style>
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            #telegramLaunchBtn a:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 25px rgba(0, 136, 204, 0.5);
-            }
-        </style>
+        <a href="https://t.me/booottttttttttt_bot" target="_blank" 
+           style="
+                display: flex; 
+                align-items: center; 
+                gap: 12px; 
+                background: linear-gradient(135deg, #0088cc, #00aced);
+                color: white; 
+                padding: 16px 24px; 
+                border-radius: 30px; 
+                text-decoration: none; 
+                box-shadow: 0 5px 20px rgba(0, 136, 204, 0.4);
+                transition: all 0.3s ease;
+                border: 2px solid white;
+                position: fixed; 
+                bottom: 25px; 
+                right: 25px; 
+                z-index: 99999;
+                animation: fadeInUp 0.5s ease-out;
+            ">
+            <i class="fab fa-telegram" style="font-size: 28px;"></i>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">Open in Telegram</div>
+                <div style="font-size: 13px; opacity: 0.95; margin-top: 3px;">@booottttttttttt_bot</div>
+            </div>
+        </a>
     `;
     document.body.appendChild(button);
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        #telegramLaunchBtn a:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.5);
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Add click event for hover effect
+    button.querySelector('a').addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px) scale(1.05)';
+    });
+    
+    button.querySelector('a').addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
 }
 
 // Initialize the page
@@ -711,14 +745,18 @@ function initPage() {
     // Initialize event listeners
     initEventListeners();
     
-    // Add Telegram UI elements
-    if (tg) {
-        addTelegramBadge();
-        console.log('📱 Running inside Telegram Mini App');
-    } else {
-        addTelegramButton();
-        console.log('🌐 Running in Web Browser');
-    }
+    // Add Telegram UI elements - wait a bit to ensure DOM is ready
+    setTimeout(() => {
+        if (tg) {
+            addTelegramBadge();
+            console.log('📱 Running inside Telegram Mini App');
+            console.log('✅ Telegram badge added: @booottttttttttt_bot');
+        } else {
+            addTelegramButton();
+            console.log('🌐 Running in Web Browser');
+            console.log('✅ Telegram button added: @booottttttttttt_bot');
+        }
+    }, 100);
     
     // Add animation to service cards
     const serviceCards = document.querySelectorAll('.service-card');
