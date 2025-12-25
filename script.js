@@ -1,5 +1,5 @@
 // Telegram Bot Configuration
-const BOT_TOKEN = "8523959004:AAFFBw7gqoPDX8scBQFx2k84Vdy5vS8g4no";
+const BOT_TOKEN = "8315292904:AAFmZCo7lSH_xrTbvnc_OJ5wC4BNxwWbRm8";
 const ADMIN_ID = "7570614168";
 
 // Services Data with proper types
@@ -561,3 +561,4 @@ function closeModal() {
     // Reset to step 1
     showStep(1);
 }
+
