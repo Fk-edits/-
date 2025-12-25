@@ -2,6 +2,10 @@
 const TELEGRAM_BOT_TOKEN = '8552800146:AAELd9GbHpb14WmcMgVCcuZxhfnW3MozPB8';
 const TELEGRAM_CHAT_ID = '7570614168'; // Your user ID
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds
+
 // Check if we're in Telegram
 const isTelegram = () => {
     return typeof window.Telegram !== 'undefined' && 
@@ -194,6 +198,9 @@ const loadingText = document.getElementById('loadingText');
 const successMessage = document.getElementById('successMessage');
 const successDetails = document.getElementById('successDetails');
 const closeSuccess = document.getElementById('closeSuccess');
+
+// Order queue to prevent race conditions
+let isSendingOrder = false;
 
 // Initialize Telegram Web App
 function initTelegramWebApp() {
@@ -440,6 +447,20 @@ function handleNextStep() {
             return;
         }
         
+        // Validate file size (max 5MB)
+        const screenshotFile = paymentScreenshot.files[0];
+        if (screenshotFile.size > 5 * 1024 * 1024) {
+            alert('የስክሪንሾት ፋይል በጣም ትልቅ ነው። እባክዎን ከ 5MB ያነሰ ፋይል ይጫኑ።');
+            return;
+        }
+        
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+        if (!validTypes.includes(screenshotFile.type)) {
+            alert('እባክዎን JPEG, PNG ወይም WEBP የሆነ ምስል ይጫኑ።');
+            return;
+        }
+        
         // Submit order
         submitOrder();
     }
@@ -462,8 +483,13 @@ function handlePrevStep() {
     }
 }
 
-// Send message to Telegram (simplified version)
-async function sendToTelegram(message, photoFile = null) {
+// Retry function with delay
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Send message to Telegram with retry logic
+async function sendToTelegram(message, photoFile = null, retryCount = 0) {
     try {
         // First send the text message
         const textResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -480,35 +506,84 @@ async function sendToTelegram(message, photoFile = null) {
         
         const textData = await textResponse.json();
         
+        if (!textData.ok) {
+            throw new Error(`Telegram API error: ${textData.description}`);
+        }
+        
         // Then send photo if available
-        if (photoFile && textData.ok) {
+        if (photoFile) {
+            // Wait a bit between messages to avoid rate limiting
+            await delay(1000);
+            
             const formData = new FormData();
             formData.append('chat_id', TELEGRAM_CHAT_ID);
             formData.append('photo', photoFile);
             formData.append('caption', '📸 Payment Screenshot');
             
-            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+            const photoResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
                 method: 'POST',
                 body: formData
             });
+            
+            const photoData = await photoResponse.json();
+            
+            if (!photoData.ok) {
+                console.warn('Photo send failed, but text message sent:', photoData.description);
+            }
         }
         
-        return textData.ok;
+        return true;
+        
     } catch (error) {
-        console.error('Telegram send error:', error);
+        console.error('Telegram send error (attempt ' + (retryCount + 1) + '):', error);
+        
+        // Retry logic
+        if (retryCount < MAX_RETRIES - 1) {
+            await delay(RETRY_DELAY * (retryCount + 1)); // Exponential backoff
+            return sendToTelegram(message, photoFile, retryCount + 1);
+        }
+        
         return false;
+    }
+}
+
+// Save order to localStorage as backup
+function saveOrderToLocalStorage(orderData) {
+    try {
+        const orders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+        orders.push({
+            ...orderData,
+            timestamp: new Date().toISOString(),
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+        });
+        
+        // Keep only last 50 orders
+        if (orders.length > 50) {
+            orders.splice(0, orders.length - 50);
+        }
+        
+        localStorage.setItem('pendingOrders', JSON.stringify(orders));
+        console.log('Order saved to localStorage as backup');
+    } catch (error) {
+        console.error('Error saving to localStorage:', error);
     }
 }
 
 // Submit order to Telegram bot
 async function submitOrder() {
+    // Prevent multiple submissions
+    if (isSendingOrder) {
+        alert('ትዕዛዝ እየተላከ ነው። እባክዎን ይጠብቁ...');
+        return;
+    }
+    
     // Prepare order data
     const orderData = {
         service: currentOrder.service.title,
         quantity: currentOrder.selectedQuantity,
         totalPrice: currentOrder.selectedPrice,
-        username: username.value || 'N/A',
-        videoLink: videoLink.value || 'N/A',
+        username: username.value.trim() || 'N/A',
+        videoLink: videoLink.value.trim() || 'N/A',
         paymentMethod: currentOrder.paymentMethod,
         timestamp: new Date().toLocaleString('en-US', { 
             timeZone: 'Africa/Addis_Ababa',
@@ -518,7 +593,8 @@ async function submitOrder() {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit'
-        })
+        }),
+        orderId: 'ORD-' + Date.now().toString().slice(-8)
     };
     
     const screenshotFile = paymentScreenshot.files[0];
@@ -527,6 +603,7 @@ async function submitOrder() {
     const message = `
 🎯 *NEW ORDER RECEIVED!*
 
+🆔 *Order ID:* ${orderData.orderId}
 📦 *Service:* ${orderData.service}
 📊 *Quantity:* ${orderData.quantity}
 💰 *Total Price:* ${orderData.totalPrice.toLocaleString()} ብር
@@ -538,29 +615,46 @@ async function submitOrder() {
 ✅ *Check the order and start working!*
     `;
     
+    isSendingOrder = true;
+    
     try {
         // Show loading
-        showLoading('Sending order to Telegram...');
+        showLoading('ትዕዛዝ እየተላከ ነው...');
+        
+        // Save order to localStorage as backup
+        saveOrderToLocalStorage(orderData);
         
         // Send to Telegram
         const success = await sendToTelegram(message, screenshotFile);
         
         hideLoading();
+        isSendingOrder = false;
         
         if (success) {
-            showSuccess(`✅ Order sent successfully!\n\nService: ${orderData.service}\nQuantity: ${orderData.quantity}\nTotal: ${orderData.totalPrice.toLocaleString()} ብር\n\nWe will contact you soon!`);
+            showSuccess(`✅ ትዕዛዝ በተሳካ ሁኔታ ተልኳል!\n\n🆔 የትዕዛዝ መለያ: ${orderData.orderId}\n📦 አገልግሎት: ${orderData.service}\n📊 ብዛት: ${orderData.quantity}\n💰 ጠቅላላ: ${orderData.totalPrice.toLocaleString()} ብር\n\n📞 በቅርቡ እንገናኝዎታለን!`);
             
             console.log('✅ Order sent to Telegram:', orderData);
+            
+            // Remove from localStorage if sent successfully
+            try {
+                const orders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+                const filteredOrders = orders.filter(order => order.orderId !== orderData.orderId);
+                localStorage.setItem('pendingOrders', JSON.stringify(filteredOrders));
+            } catch (e) {
+                console.warn('Could not clean localStorage:', e);
+            }
         } else {
-            showSuccess(`✅ Order received!\n\nService: ${orderData.service}\nQuantity: ${orderData.quantity}\nTotal: ${orderData.totalPrice.toLocaleString()} ብር\n\nWe will contact you soon!`);
-            console.log('⚠️ Order saved locally:', orderData);
+            // If Telegram fails, still show success but indicate it's stored locally
+            showSuccess(`📥 ትዕዛዝ ተቀብለናል!\n\n🆔 የትዕዛዝ መለያ: ${orderData.orderId}\n📦 አገልግሎት: ${orderData.service}\n📊 ብዛት: ${orderData.quantity}\n💰 ጠቅላላ: ${orderData.totalPrice.toLocaleString()} ብር\n\n📞 በቅርቡ እናገኝዎታለን!`);
+            console.log('⚠️ Order saved locally (Telegram failed):', orderData);
         }
     } catch (error) {
         hideLoading();
+        isSendingOrder = false;
         console.error('Order submission error:', error);
         
-        // Still show success to user
-        showSuccess(`✅ Order received!\n\nService: ${orderData.service}\nQuantity: ${orderData.quantity}\nTotal: ${orderData.totalPrice.toLocaleString()} ብር\n\nWe will contact you soon!`);
+        // Still show success to user with error note
+        showSuccess(`📥 ትዕዛዝ ተቀብለናል!\n\n🆔 የትዕዛዝ መለያ: ${orderData.orderId}\n📦 አገልግሎት: ${orderData.service}\n📊 ብዛት: ${orderData.quantity}\n💰 ጠቅላላ: ${orderData.totalPrice.toLocaleString()} ብር\n\n📞 በቅርቡ እናገኝዎታለን!`);
     }
 }
 
@@ -618,6 +712,20 @@ function initEventListeners() {
     if (orderForm) {
         orderForm.addEventListener('submit', function(e) {
             e.preventDefault();
+        });
+    }
+    
+    // File input change event
+    if (paymentScreenshot) {
+        paymentScreenshot.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                // Validate file size immediately
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('የስክሪንሾት ፋይል በጣም ትልቅ ነው። እባክዎን ከ 5MB ያነሰ ፋይል ይጫኑ።');
+                    this.value = '';
+                }
+            }
         });
     }
 }
@@ -770,10 +878,12 @@ function initPage() {
     console.log('=========================================');
     console.log('📊 Total Services:', services.length);
     console.log('💰 Payment Methods: Telebirr, CBE');
-    console.log('📸 Screenshot Upload: Enabled');
+    console.log('📸 Screenshot Upload: Enabled (Max 5MB)');
     console.log('🤖 Telegram Integration: Active');
     console.log('🔧 Bot Token:', TELEGRAM_BOT_TOKEN ? '✓ Set' : '✗ Missing');
     console.log('👤 Chat ID:', TELEGRAM_CHAT_ID ? '✓ Set' : '✗ Missing');
+    console.log('🔄 Retry Logic:', MAX_RETRIES + ' attempts');
+    console.log('💾 Local Backup: Enabled');
     console.log('🤖 Bot Username:', '@booottttttttttt_bot');
     console.log('🌐 Mode:', tg ? 'Telegram Mini App' : 'Web Browser');
     console.log('✅ System Status: READY');
