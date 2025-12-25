@@ -3,184 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Media Promotion Services</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Social Media Growth Services | Boost Followers & Engagement</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css">
 </head>
 <body>
+   <!-- Telegram Order Button -->
+<a href="https://t.me/pet_fikir" 
+   class="telegram-order-btn" target="_blank">
+    <i class="fab fa-telegram"></i> Order via Telegram
+</a>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Success</div>
+            <div class="toast-message" id="toastMessage">Order submitted successfully!</div>
+        </div>
+    </div>
+
     <!-- Header -->
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-rocket"></i>
-                <div>
-                    <div>SocialBoost</div>
-                    <div class="tagline">የማህበራዊ ሚዲያ አገልግሎቶች</div>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="header-title">
+                    <span class="header-icon"><i class="fas fa-rocket"></i></span>
+                    Social Media Growth Services
+                </h1>
+                <p class="header-subtitle">Boost your followers, likes, and engagement across all platforms with our premium services</p>
+                <div class="trust-badge">
+                    <span class="badge-item"><i class="fas fa-bolt"></i> Fast Delivery</span>
+                    <span class="badge-item"><i class="fas fa-shield-alt"></i> 100% Safe</span>
+                    <span class="badge-item"><i class="fas fa-star"></i> High Quality</span>
                 </div>
-            </div>
-            <div class="trust-badge">
-                <i class="fas fa-shield-alt"></i>
-                <span>100% አስተማማኝ አገልግሎት</span>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Main Content -->
+    <main class="main-content">
         <div class="container">
-            <h1>የሶሻል ሚዲያ ተጠቃሚነት በስፋት እናሳድግልዎታለን</h1>
-            <p>በአስተማማኝነት እና በተመጣጣኝ ዋጋ ሁሉንም የማህበራዊ ሚዲያ አገልግሎቶች እናቀርባለን። <span class="highlight">ቴሌግራም፣ Instagram፣ TikTok፣ Facebook እና YouTube</span> የሚሆኑትን ቻናሎች እና ግሩፖች እናሳድጋለን።</p>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="services-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>የኛ አገልግሎቶች</h2>
+            <div class="services-intro">
+                <h2 class="section-title"><i class="fas fa-chart-line"></i> Our Premium Services</h2>
+                <p class="section-subtitle">Choose from our wide range of social media growth services</p>
             </div>
 
-            <div class="services-grid" id="servicesGrid">
-                <!-- Services will be dynamically loaded here -->
+            <div class="services-grid" id="servicesContainer">
+                <!-- Services will be loaded by JavaScript -->
+            </div>
+
+            <div class="features-section">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="iconoir-send-diagonal"></i>
+                    </div>
+                    <h3>Fast Delivery</h3>
+                    <p>Start seeing results within hours of your order</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="iconoir-shield-check"></i>
+                    </div>
+                    <h3>100% Safe</h3>
+                    <p>Organic growth methods that keep your account secure</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="iconoir-headset-support"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock customer support via Telegram</p>
+                </div>
             </div>
         </div>
-    </section>
+    </main>
 
     <!-- Order Modal -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">አዲስ ትዕዛዝ</h3>
-                <button class="close-modal" id="closeModal">&times;</button>
+                <h2 id="modalTitle"><i class="fas fa-shopping-cart"></i> Order Service</h2>
+                <button class="close-modal" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
-                <form id="orderForm">
+                <div class="step-indicator">
+                    <div class="step-dot active" data-step="1"></div>
+                    <div class="step-dot" data-step="2"></div>
+                    <div class="step-dot" data-step="3"></div>
+                    <div class="step-dot" data-step="4"></div>
+                </div>
+
+                <!-- Step 1: Service Selection -->
+                <div class="step active" id="step1">
                     <div class="form-group">
-                        <label for="serviceName">የአገልግሎት አይነት</label>
-                        <input type="text" class="form-control" id="serviceName" readonly>
-                    </div>
-                    
-                    <div class="selected-quantity">
-                        <h4>ተመርጠዋል: <span id="quantityValue"></span></h4>
-                        <div id="quantityPrice"></div>
-                    </div>
-                    
-                    <div class="form-group" id="usernameField">
-                        <label for="username">የተጠቃሚ ስም</label>
-                        <input type="text" class="form-control" id="username" placeholder="@username" required>
-                    </div>
-                    
-                    <div class="form-group" id="linkField" style="display:none;">
-                        <label for="videoLink">የቪዲዮ ማገናኛ</label>
-                        <input type="url" class="form-control" id="videoLink" placeholder="https://..." required>
-                    </div>
-                    
-                    <div class="price-summary">
-                        <h4>የዋጋ ማጠቃለያ</h4>
-                        <div class="summary-row">
-                            <span>የአገልግሎት ዋጋ</span>
-                            <span id="unitPrice">0 ብር</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>ብዛት</span>
-                            <span id="displayQuantity">1</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>ጠቅላላ</span>
-                            <span id="totalPrice">0 ብር</span>
-                        </div>
+                        <label class="form-label"><i class="fas fa-list-alt"></i> Select Service Type</label>
+                        <select class="form-control" id="serviceType"></select>
                     </div>
                     
                     <div class="form-group">
-                        <label>የክፍያ ዘዴ ምረጥ</label>
-                        <div class="payment-methods">
-                            <div class="payment-method" data-method="telebirr">
-                                <i class="fas fa-mobile-alt"></i>
-                                <div>Telebirr</div>
-                            </div>
-                            <div class="payment-method" data-method="cbe">
-                                <i class="fas fa-university"></i>
-                                <div>CBE</div>
-                            </div>
+                        <label class="form-label"><i class="fas fa-hashtag"></i> Quantity</label>
+                        <input type="number" class="form-control" id="quantity" 
+                               min="1" max="100" value="1" placeholder="Enter quantity">
+                        <div class="form-hint">Example: 2 means 2K followers/likes/views</div>
+                    </div>
+                    
+                    <div class="price-display-card">
+                        <div class="price-label">Total Amount</div>
+                        <div class="total-price" id="totalPrice">0 ብር</div>
+                        <div class="price-breakdown" id="priceDetails"></div>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" id="continueBtn">
+                        <span>Continue to Details</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Step 2: Details -->
+                <div class="step" id="step2">
+                    <div class="form-group">
+                        <label class="form-label" id="usernameLabel">
+                            <i class="fas fa-user"></i> Username/Profile
+                        </label>
+                        <input type="text" class="form-control" id="username" 
+                               placeholder="Enter your username or profile URL">
+                    </div>
+                    
+                    <div class="form-group" id="videoLinkGroup" style="display: none;">
+                        <label class="form-label">
+                            <i class="fas fa-video"></i> Video Link
+                        </label>
+                        <input type="url" class="form-control" id="videoLink" 
+                               placeholder="Enter video URL (for views/likes services)">
+                    </div>
+                    
+                    <div class="order-summary-card">
+                        <h3 class="summary-title"><i class="fas fa-file-alt"></i> Order Summary</h3>
+                        <div class="summary-content" id="orderSummary"></div>
+                        <div class="summary-total">
+                            <span>Total Amount:</span>
+                            <span class="total-price" id="finalPrice">0 ብር</span>
                         </div>
                     </div>
                     
-                    <div class="payment-details" id="paymentDetails">
-                        <h4>የክፍያ መረጃዎች</h4>
-                        <div class="account-details">
-                            <div id="accountName">ስም: የስራ ማእከል</div>
-                            <div class="account-number" id="accountNumber">2519XXXXXXXX</div>
-                            <div id="additionalInfo"></div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" id="backBtn1">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" id="continueToPayment">
+                            <i class="fas fa-credit-card"></i> Continue to Payment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Payment -->
+                <div class="step" id="step3">
+                    <h3 class="payment-title"><i class="fas fa-credit-card"></i> Select Payment Method</h3>
+                    
+                    <div class="payment-methods-grid">
+                        <div class="payment-method-card" data-method="telebirr">
+                            <div class="payment-icon">
+                                <i class="iconoir-phone"></i>
+                            </div>
+                            <div class="payment-name">Telebirr</div>
+                            <div class="payment-desc">Instant Transfer</div>
+                        </div>
+                        <div class="payment-method-card" data-method="cbe">
+                            <div class="payment-icon">
+                                <i class="iconoir-bank"></i>
+                            </div>
+                            <div class="payment-name">CBE Bank</div>
+                            <div class="payment-desc">Bank Transfer</div>
+                        </div>
+                        <div class="payment-method-card" data-method="awash">
+                            <div class="payment-icon">
+                                <i class="iconoir-building"></i>
+                            </div>
+                            <div class="payment-name">Awash Bank</div>
+                            <div class="payment-desc">Bank Transfer</div>
+                        </div>
+                    </div>
+                    
+                    <div id="telebirrDetails" class="account-details-card">
+                        <h4 class="account-title"><i class="fas fa-mobile-alt"></i> Telebirr Payment</h4>
+                        <div class="account-number">+251 912 345 678</div>
+                        <p class="account-instruction">Send <strong id="telebirrAmount">0 ብር</strong> to this number and upload screenshot below.</p>
+                    </div>
+                    
+                    <div id="cbeDetails" class="account-details-card">
+                        <h4 class="account-title"><i class="fas fa-university"></i> CBE Bank Transfer</h4>
+                        <div class="account-number">1000 2345 6789</div>
+                        <p class="account-instruction">Account Name: SOCIAL MEDIA SERVICES<br>Send payment and upload transfer screenshot.</p>
+                    </div>
+                    
+                    <div id="awashDetails" class="account-details-card">
+                        <h4 class="account-title"><i class="fas fa-landmark"></i> Awash Bank Transfer</h4>
+                        <div class="account-number">0132 4567 8901</div>
+                        <p class="account-instruction">Account Name: DIGITAL GROWTH SERVICES<br>Send payment and upload transfer screenshot.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-camera"></i> Upload Payment Screenshot
+                        </label>
+                        <div class="file-upload">
+                            <input type="file" class="form-control" id="paymentScreenshot" accept="image/*">
+                            <div class="file-upload-label">Choose file</div>
+                        </div>
+                        <div class="form-hint">Take screenshot after payment and upload here</div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" id="backBtn2">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-success" id="submitOrderBtn">
+                            <i class="fas fa-paper-plane"></i> Submit Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Success -->
+                <div class="step" id="step4">
+                    <div class="success-container">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 class="success-title">Order Submitted Successfully! 🎉</h2>
+                        
+                        <div class="success-details">
+                            <div class="success-detail">
+                                <span class="detail-label">Order ID:</span>
+                                <span class="detail-value" id="orderIdDisplay">ORD-12345678</span>
+                            </div>
+                            <div class="success-detail">
+                                <span class="detail-label">Order Time:</span>
+                                <span class="detail-value" id="orderTime"></span>
+                            </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="paymentScreenshot">የክፍያ ስክሪንሾት ይጫኑ</label>
-                            <input type="file" class="form-control" id="paymentScreenshot" accept="image/*" required>
-                            <small>ክፍያውን ካደረጉ በኋላ የተጠናቀቀ ስክሪንሾት ይጫኑ (PNG, JPG, JPEG)</small>
-                        </div>
+                        <p class="success-message">
+                            ✅ Your order has been sent to our system.<br>
+                            We'll process it immediately and contact you via Telegram.
+                        </p>
+                        
+                        <button class="btn btn-primary btn-block" onclick="closeModal()">
+                            <i class="fas fa-shopping-cart"></i> Order Another Service
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="prevStep">ተመለስ</button>
-                <button class="btn btn-primary" id="nextStep">ቀጥል</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loader"></div>
-        <div id="loadingText">ትዕዛዙን እየላክን ነው...</div>
-    </div>
-
-    <!-- Success Message -->
-    <div class="success-message" id="successMessage">
-        <div class="success-content">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h3>ትዕዛዝዎ በተሳካ ሁኔታ ተልኳል! ✅</h3>
-            <p id="successDetails">ትዕዛዝዎ ወደ አስተዳዳሪ ተልኳል። በቅርብ ጊዜ እንገናኝዎታለን።</p>
-            <button class="btn btn-primary" id="closeSuccess" style="margin-top: 20px;">ዝጋ</button>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer>
+    <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>ስለ እኛ</h3>
-                    <p>በማህበራዊ ሚዲያ ውስጥ ከፍተኛ ጥራት ያለው አገልግሎት እንሰጣለን። የእኛ ዓላማ በአስተማማኝነት እና በፍጥነት ደንበኞቻችንን ማሟላት ነው።</p>
-                    <div class="trust-badge">
-                        <i class="fas fa-check-circle"></i>
-                        <span>100% አስተማማኝ አገልግሎት</span>
+                    <h3 class="footer-title">
+                        <i class="fas fa-headset"></i> Contact Support
+                    </h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fab fa-telegram"></i>
+                            <div>
+                                <div class="contact-label">Telegram Bot</div>
+                                <div class="contact-value">@boiuhgfcxbot</div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <div>
+                                <div class="contact-label">Phone</div>
+                                <div class="contact-value">+251 912 345 678</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="footer-section">
-                    <h3>በማንኛውም ጊዜ ያግኙን</h3>
-                    <p><i class="fas fa-envelope"></i> info@socialboost.et</p>
-                    <p><i class="fas fa-phone"></i> +251 9XX XXX XXX</p>
-                    <p><i class="fab fa-telegram"></i> @socialboost_et</p>
+                    <h3 class="footer-title">
+                        <i class="fas fa-clock"></i> Working Hours
+                    </h3>
+                    <p>24/7 Customer Support</p>
+                    <p>Order Processing: 24 hours daily</p>
                 </div>
                 
                 <div class="footer-section">
-                    <h3>ማስታወሻ</h3>
-                    <p>ሁሉም አገልግሎቶቻችን በሙሉ አስተማማኝ ናቸው። ደንበኞቻችን ሙሉ የሆነ እርካታ እንዲኖራቸው እናስተማማናለን።</p>
+                    <h3 class="footer-title">
+                        <i class="fas fa-shield-alt"></i> Guarantee
+                    </h3>
+                    <p>✓ 100% Satisfaction</p>
+                    <p>✓ Refund if service not delivered</p>
+                    <p>✓ Secure payment methods</p>
                 </div>
             </div>
             
-            <div class="copyright">
-                &copy; 2023 SocialBoost. ሁሉም መብቶች የተጠበቁ ናቸው።
+            <div class="footer-bottom">
+                <p>&copy; 2023 Social Media Growth Services. All rights reserved.</p>
+                <p class="footer-note">Professional social media marketing services</p>
             </div>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 </html>
